@@ -26,21 +26,29 @@ Services used for gathering and accessing telemetry data:
 
 # Logs
 
-The [rails_semantic_logger](https://github.com/reidmorrison/rails_semantic_logger) gem is used in the Rails app to produce and output logs to the `STDOUT`. Then, `promtail` scraps logs from the docker's standard output and pushes them to `Loki`. `Loki` stores the logs and makes them available for querying in Grafana.
+The [rails_semantic_logger](https://github.com/reidmorrison/rails_semantic_logger) gem is used in the Rails app to produce and output logs to the `STDOUT`. Then, **promtail** scraps logs from the docker's standard output and pushes them to **Loki**. **Loki** stores the logs and makes them available for querying in **Grafana**.
+
+Logs are outputted in the `fmt` format. In addition to standard fields, there are extra fields included: `request_id`, `trace_id`, `span_id` and `operation`.
 
 # Traces
 
 The Rails app is auto-instrumented with suitable Open Telemetry Contrib packages. The list of all available packages can be found on the [OpenTelemetry registry](https://opentelemetry.io/ecosystem/registry/?s=&component=&language=ruby).
 
-Traces produced by the instrumentation are being exported to `Tempo`. Tempo stores the traces and makes them available for querying in Grafana.
-
+Traces produced by the instrumentation are being exported to **Tempo**. **Tempo** stores the traces and makes them available for querying in **Grafana**.
 
 # Metrics
 
-Metrics are emitted by the StatsD. See a lengthy explaination why this approach https://mkaz.me/blog/2023/collecting-metrics-from-multi-process-web-servers-the-ruby-case/
+Metrics are emitted in the **StatsD** style. Currently, the only instrumentation is the [statsd-rack-instrument](https://rubygems.org/gems/statsd-rack-instrument) measuring HTTP requests.
+
+Metrics are sent to the `statsd_exporter` which then aggregates and exposes metrics in the **Prometheus** format. **Prometheus** scraps the `statsd_exporter`, stores and makes metrics available for querying in **Grafana**.
+\
+See a lengthy explaination why this approach is suggested https://mkaz.me/blog/2023/collecting-metrics-from-multi-process-web-servers-the-ruby-case/
 
 # Correlating logs, traces, and metrics
 
 # Tests instrumentation
 
 
+# TODO
+
+[] Siekiq metrics
