@@ -17,7 +17,7 @@ class DemoController < ApplicationController
 
   def database_sequential_read
     vegetables_count = Vegetable.count
-require 'pry' ; binding.pry
+
     @vegetables = vegetables_count.times.map do |i|
       Vegetable.offset(i).first
     end
