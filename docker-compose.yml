@@ -32,7 +32,7 @@ services:
     build: rails_app
     command: bundle exec sidekiq -C config/sidekiq.yml
     environment:
-      - SERVICE_NAME=background_processing_app
+      - SERVICE_NAME=async_processing_app
     env_file:
       - .env_rails
     depends_on:
