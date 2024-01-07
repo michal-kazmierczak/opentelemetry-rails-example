@@ -1,0 +1,7 @@
+---
+mappings:
+- match: "rack_server_request_duration_seconds"
+  name: "rack_server_request_duration_seconds"
+  observer_type: histogram
+  histogram_options:
+    buckets: [.05, .1, .2, .3, .4, .5, .75, 1, 2.5, 5, 10]

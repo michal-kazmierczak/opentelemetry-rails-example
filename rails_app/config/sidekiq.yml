@@ -1,0 +1,9 @@
+---
+:verbose: true
+:max_retries: 0
+:concurrency: 20
+:queues:
+  - [urgent, 20]
+  - [default, 5]
+  - [low]
+  - [notify]

@@ -1,0 +1,133 @@
+version: "3.9"
+
+services:
+
+  # an init service to migrate (and create, if needed) the database
+  init_database:
+    build: rails_app
+    environment:
+      - SERVICE_NAME=init_database
+    command: /rails/init_db.sh
+    env_file:
+      - .env_rails
+    depends_on:
+      - postgres
+      - promtail
+
+  # HTTP service - Rails app
+  web_app:
+    build: rails_app
+    environment:
+      - SERVICE_NAME=web_app
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env_rails
+    depends_on:
+      init_database:
+        condition: service_completed_successfully
+
+  # async processing - Sidekiq app
+  async_processing_app:
+    build: rails_app
+    command: bundle exec sidekiq -C config/sidekiq.yml
+    environment:
+      - SERVICE_NAME=background_processing_app
+    env_file:
+      - .env_rails
+    depends_on:
+      init_database:
+        condition: service_completed_successfully
+
+  postgres:
+    image: postgres:16
+    environment:
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - ./volumes/postgres:/var/lib/postgresql/data:rw
+    depends_on:
+      - promtail
+
+  redis:
+    image: redis:7
+    volumes:
+      - ./volumes/redis:/data:rw
+    depends_on:
+      - promtail
+
+  grafana:
+    image: grafana/grafana:latest
+    volumes:
+      - ./volumes/grafana/datasources.yaml:/etc/grafana/provisioning/datasources/datasources.yaml
+      # - ./volumes/grafana/grafana.ini:/etc/grafana/grafana.ini
+    environment:
+      - GF_PATHS_PROVISIONING=/etc/grafana/provisioning
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+    ports:
+      - "3001:3000"
+
+  # logging
+  promtail:
+    image: grafana/promtail:2.9.3
+    volumes:
+      - ./volumes/promtail/promtail-local-config.yaml:/etc/promtail/config.yaml:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: -config.file=/etc/promtail/config.yaml
+
+  loki:
+    image: grafana/loki:2.9.3
+    command: [ "-config.file=/etc/loki/config.yaml" ]
+    volumes:
+      - ./volumes/loki/config.yaml:/etc/loki/config.yaml
+    ports:
+      - "3100:3100"
+    depends_on:
+      - minio
+
+  # tracing
+  tempo:
+    image: grafana/tempo:2.3.1
+    command: [ "-config.file=/etc/tempo.yaml" ]
+    volumes:
+      - ./volumes/tempo/tempo.yaml:/etc/tempo.yaml
+      - ./volumes/tempo/data:/tmp/tempo
+    ports:
+      - "3200:3200"   # tempo metrics
+      - "4318:4318"  # otlp http
+    depends_on:
+      - minio
+
+  # metrics
+  statsd-exporter:
+    image: prom/statsd-exporter:v0.26.0
+    command: "--statsd.mapping-config=/tmp/statsd_mapping.yml"
+    volumes:
+      - ./volumes/statsd-exporter:/tmp:ro
+
+  prometheus:
+    image: prom/prometheus:v2.48.1
+    command: --config.file=/etc/prometheus/prometheus.yml --storage.tsdb.path=/prometheus --web.console.libraries=/usr/share/prometheus/console_libraries --web.console.templates=/usr/share/prometheus/consoles --storage.tsdb.retention.time=30d
+    ports:
+      - "9090"
+    volumes:
+      - ./volumes/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+
+  # general purpose object storage
+  minio:
+    image: minio/minio
+    entrypoint:
+      - sh
+      - -euc
+      - |
+        mkdir -p /data/loki-data && \
+        mkdir -p /data/loki-ruler && \
+        mkdir -p /data/tempo-data && \
+        minio server /data
+    environment:
+      - MINIO_ROOT_USER=minio
+      - MINIO_ROOT_PASSWORD=supersecret
+      - MINIO_PROMETHEUS_AUTH_TYPE=public
+      - MINIO_UPDATE=off
+    volumes:
+      - ./volumes/minio:/data

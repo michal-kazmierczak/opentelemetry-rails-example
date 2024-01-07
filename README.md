@@ -2,7 +2,7 @@
 
 A reference repository for instrumenting Rails apps. It presents what can be achieved using generally available self-hosted software, as opposed to leveraging observability to cloud providers. It's suited for testing and debugging, not as a guidance for production setups.
 
-It's _opinionated_ in a way that the included libraries and strategies do have alternatives. The main intention though is to stick with the Open Source and Open Standards. I'm willing to see suggestions and discussions about different approaches.
+It's _opinionated_ in a way that the included libraries and solutions do have alternatives. The main intention though is to stick with the Open Source and Open Standards. I'm willing to see suggestions and discussions about different approaches.
 
 The repository is being gradually updated as Open Telemetry SDK and Open Telemetry Contrib Packages for Ruby progress.
 
@@ -51,4 +51,6 @@ See a lengthy explaination why this approach is suggested https://mkaz.me/blog/2
 
 # TODO
 
-[] Siekiq metrics
+- Siekiq metrics
+
+- Exemplars to enable metrics <-> traces navigation

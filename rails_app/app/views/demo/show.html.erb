@@ -1,0 +1,9 @@
+<h1>Hello!</h1>
+<h2>Please see below a curated list of vegetables</h2>
+
+<dl>
+<% @vegetables.each do |vegetable| %>
+  <dt><%= vegetable.name %></dt>
+  <dd><%= vegetable.description %></dd>
+<% end %>
+</dl>

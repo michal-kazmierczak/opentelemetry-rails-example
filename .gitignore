@@ -1,0 +1,6 @@
+.DS_Store
+volumes/postgres/*
+volumes/minio/*
+volumes/tempo/data/*
+
+volumes/redis/dump.rdb
