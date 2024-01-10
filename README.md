@@ -45,7 +45,8 @@ Metrics are emitted in the **StatsD** style. Currently, the only instrumentation
 
 Metrics are sent to the `statsd_exporter` which then aggregates and exposes metrics in the **Prometheus** format. **Prometheus** scraps the `statsd_exporter`, stores and makes metrics available for querying in **Grafana**.
 \
-See a lengthy explaination why this approach is suggested https://mkaz.me/blog/2023/collecting-metrics-from-multi-process-web-servers-the-ruby-case/
+See a lengthy explanation why this approach is suggested https://mkaz.me/blog/2023/collecting-metrics-from-multi-process-web-servers-the-ruby-case/
+
 
 # Correlating logs, traces, and metrics
 
