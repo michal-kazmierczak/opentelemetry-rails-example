@@ -9,7 +9,7 @@ VegetablesSet = [
   },
   {
     name: 'tomato',
-    description: "how would have known it's a vegetable"
+    description: "who would have known it's a vegetable"
   },
   {
     name: 'broccoli',

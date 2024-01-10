@@ -2,13 +2,11 @@
 
 A reference repository for instrumenting Rails apps. It presents what can be achieved using generally available self-hosted software, as opposed to leveraging observability to cloud providers. It's suited for testing and debugging, not as a guidance for production setups.
 
-It's _opinionated_ in a way that the included libraries and solutions do have alternatives. The main intention though is to stick with the Open Source and Open Standards. I'm willing to see suggestions and discussions about different approaches.
+It's _opinionated_ in a way that the included libraries and solutions do have alternatives. The main intention though is to stick with Open Source and Open Standards. I'm willing to see suggestions and discussions about different approaches.
 
 The repository is being gradually updated as Open Telemetry SDK and Open Telemetry Contrib Packages for Ruby progress.
 
-# Short demo
-
-
+I recommend visiting [open-telemetry/opentelemetry-demo](https://github.com/open-telemetry/opentelemetry-demo) for a complete example of instrumentation of a distributed system.
 
 # Included tech stack
 
@@ -23,6 +21,11 @@ Services used for gathering and accessing telemetry data:
 - [Tempo](https://github.com/grafana/tempo) for tracing
 - [statsd_exporter](https://github.com/prometheus/statsd_exporter) and [Prometheus](https://github.com/prometheus/prometheus) for metrics
 - [Grafana](https://github.com/grafana/grafana) for visualization
+
+
+# Short demo
+
+
 
 # Logs
 
@@ -54,3 +57,5 @@ See a lengthy explaination why this approach is suggested https://mkaz.me/blog/2
 - Siekiq metrics
 
 - Exemplars to enable metrics <-> traces navigation
+
+- dashboards - rack and sidekiq
