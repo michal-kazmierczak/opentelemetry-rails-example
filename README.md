@@ -22,6 +22,7 @@ Services used for gathering and accessing telemetry data:
 - [statsd_exporter](https://github.com/prometheus/statsd_exporter) and [Prometheus](https://github.com/prometheus/prometheus) for metrics
 - [Grafana](https://github.com/grafana/grafana) for visualization
 
+![opentelemetry and rails](./docs/opentelemetry_rails.drawio.png "opentelemetry and rails")
 
 # Short demo
 
