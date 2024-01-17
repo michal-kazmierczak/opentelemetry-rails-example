@@ -85,6 +85,16 @@ services:
       - minio
 
   # tracing
+  otelcol:
+    image: otel/opentelemetry-collector-contrib:0.92.0
+    command: [ "--config=/etc/otelcol-config.yml" ]
+    volumes:
+      - ./volumes/opentelemetry-collector/otelcol-config.yml:/etc/otelcol-config.yml
+    ports:
+      - "4318"          # OTLP over HTTP receiver
+    depends_on:
+      - tempo
+
   tempo:
     image: grafana/tempo:2.3.1
     command: [ "-config.file=/etc/tempo.yaml" ]

@@ -6,12 +6,9 @@ distributor:
   receivers: # https://github.com/open-telemetry/opentelemetry-collector/tree/main/receiver
     otlp:
       protocols:
-        http:
-    jaeger:
-      protocols:
-        thrift_compact:
+        grpc:
   log_received_spans:
-    enabled: false
+    enabled: true
 
 ingester:
   trace_idle_period: 30s               # the length of time after a trace has not received spans to consider it complete and flush it
