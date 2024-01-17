@@ -8,6 +8,8 @@ Rails.application.routes.draw do
   get "demo/database_bulk_insert"
   get "demo/database_sequential_insert"
 
+  get "demo/database_delete_all"
+
   get "demo/remote_http_call"
 
   get "demo/increment_own_metric"

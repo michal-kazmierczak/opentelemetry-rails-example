@@ -42,6 +42,12 @@ class DemoController < ApplicationController
     render json: { message: 'ok!' }
   end
 
+  def database_delete_all
+    Vegetable.delete_all
+
+    render json: { message: 'ok!' }
+  end
+
   def remote_http_call
     uri = URI("https://httpbin.org/status/200")
     Net::HTTP.get(uri)
