@@ -2,10 +2,7 @@
 
 require_relative "config/environment"
 
-if ENV["STATSD_ADDR"].present?
-  require "statsd_rack_instrument"
-  use StatsDRackInstrument
-end
+use StatsDRackInstrument if defined? StatsDRackInstrument
 
 run Rails.application
 Rails.application.load_server

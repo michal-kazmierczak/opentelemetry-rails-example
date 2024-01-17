@@ -6,6 +6,8 @@ require "rails/all"
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
 
+require "statsd_rack_instrument" if ENV["STATSD_ADDR"].present?
+
 module OpentelemetryRailsExample
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
