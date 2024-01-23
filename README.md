@@ -1,12 +1,16 @@
 # OpenTelemetry ∩ Rails
 
-A reference repository for instrumenting Rails apps. It presents what can be achieved using generally available self-hosted software, as opposed to leveraging observability to cloud providers. It's suited for testing and debugging, not as a guidance for production setups.
+A reference repository for instrumenting Rails apps. It presents what can be achieved using generally available self-hosted software, as opposed to leveraging observability cloud providers. It's suited for testing and debugging, not as a guidance for production setups.
 
-It's _opinionated_ in a way that the included libraries and solutions do have alternatives. The main intention though is to stick with Open Source and Open Standards. I'm willing to see suggestions and discussions about different approaches.
+It's _opinionated_ in the way that included libraries and solutions do have alternatives. The main intention though is to stick with Open Source and Open Standards. I'm willing to see suggestions and discussions about different approaches.
 
 The repository is being gradually updated as Open Telemetry SDK and Open Telemetry Contrib Packages for Ruby progress (the Ruby OTel SDK doesn't support metrics and traces yet).
 
 I recommend visiting [open-telemetry/opentelemetry-demo](https://github.com/open-telemetry/opentelemetry-demo) for a complete example of instrumentation of a distributed system.
+
+# Short demo
+
+![opentelemetry and rails](./docs/otel_rails.gif "opentelemetry and rails")
 
 # Included tech stack
 
@@ -23,9 +27,6 @@ Services used for gathering and accessing telemetry data:
 - [Grafana](https://github.com/grafana/grafana) for visualization
 
 ![opentelemetry and rails](./docs/opentelemetry_rails.drawio.png "opentelemetry and rails")
-
-# Short demo
-
 
 
 # Logs
@@ -52,6 +53,17 @@ See a lengthy explanation why this approach is suggested https://mkaz.me/blog/20
 
 The real synergy comes from correlating all the pillars of observability - logs, traces, and metrics - together. It's super convenient to easily navigate from a log to a related trace or even from a spike in metric to a related trace. That's the main motivation behind including Grafana in the stack - a single UI that is capable of presenting and correlating all the data.
 
+## From logs to traces
+
+## From logs to metrics
+
+## From traces to logs
+
+## From traces to metrics
+
+## From metrics to logs
+
+## From metrics to traces
 
 
 # Tests instrumentation
