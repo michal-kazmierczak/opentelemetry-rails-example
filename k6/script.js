@@ -12,7 +12,7 @@ export default function () {
       var endpoint = '/demo/database_bulk_read';
       break;
     case (chance < 0.9):
-      var endpoint = '/demo/database_bulk_insert';
+      var endpoint = '/demo/database_sequential_insert';
       break;
     default:
       var endpoint = '/demo/database_delete_all';

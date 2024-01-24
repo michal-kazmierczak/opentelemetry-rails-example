@@ -249,14 +249,14 @@ GEM
     puma (6.4.2)
       nio4r (~> 2.0)
     racc (1.7.3)
-    rack (3.0.8)
-    rack-session (2.0.0)
-      rack (>= 3.0.0)
+    rack (2.2.8)
+    rack-session (1.0.2)
+      rack (< 3)
     rack-test (2.1.0)
       rack (>= 1.3)
-    rackup (2.1.0)
-      rack (>= 3)
-      webrick (~> 1.8)
+    rackup (1.0.0)
+      rack (< 3)
+      webrick
     rails (7.1.3)
       actioncable (= 7.1.3)
       actionmailbox (= 7.1.3)
@@ -296,8 +296,7 @@ GEM
       ffi (~> 1.0)
     rdoc (6.6.2)
       psych (>= 4.0.0)
-    redis-client (0.19.1)
-      connection_pool
+    redis (4.8.1)
     reline (0.4.2)
       io-console (~> 0.5)
     rexml (3.2.6)
@@ -326,11 +325,10 @@ GEM
     semantic_logger (4.15.0)
       concurrent-ruby (~> 1.0)
     shellany (0.0.1)
-    sidekiq (7.2.0)
-      concurrent-ruby (< 2)
-      connection_pool (>= 2.3.0)
-      rack (>= 2.2.4)
-      redis-client (>= 0.14.0)
+    sidekiq (6.5.12)
+      connection_pool (>= 2.2.5, < 3)
+      rack (~> 2.0)
+      redis (>= 4.5.0, < 5)
     sprockets (4.2.1)
       concurrent-ruby (~> 1.0)
       rack (>= 2.2.4, < 4)
@@ -392,7 +390,7 @@ DEPENDENCIES
   rails (~> 7.1.1)
   rails_semantic_logger
   rspec-rails
-  sidekiq
+  sidekiq (~> 6.5.12)
   sprockets-rails
   statsd-rack-instrument
   stimulus-rails

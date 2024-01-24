@@ -62,4 +62,4 @@ end
 group :test do
 end
 
-gem "sidekiq"
+gem "sidekiq", "~> 6.5.12"
