@@ -53,7 +53,7 @@ See a lengthy explanation why this approach is suggested https://mkaz.me/blog/20
 
 The real synergy comes from correlating all the pillars of observability - logs, traces, and metrics - together. It's super convenient to easily navigate from a log to a related trace or even from a spike in metric to a related trace. That's the main motivation behind including Grafana in the stack - a single UI that is capable of presenting and correlating all the data.
 
-## From logs to traces
+<!-- ## From logs to traces
 
 ## From logs to metrics
 
@@ -66,7 +66,7 @@ The real synergy comes from correlating all the pillars of observability - logs,
 ## From metrics to traces
 
 
-# Tests instrumentation
+# Tests instrumentation -->
 
 
 # TODO
