@@ -74,5 +74,3 @@ The real synergy comes from correlating all the pillars of observability - logs,
 - Siekiq metrics
 
 - Exemplars to enable metrics <-> traces navigation
-
-- dashboards - rack and sidekiq
