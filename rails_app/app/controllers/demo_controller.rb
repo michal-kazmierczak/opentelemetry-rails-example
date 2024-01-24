@@ -69,4 +69,14 @@ class DemoController < ApplicationController
 
     render json: { message: 'ok!' }
   end
+
+  def response_500
+    # do some work for the presentation purpose
+    uri = URI("https://httpbin.org/status/200")
+    Net::HTTP.get(uri)
+
+    vegetables_count = Vegetable.count
+
+    raise StandardError, "this is on purpose"
+  end
 end

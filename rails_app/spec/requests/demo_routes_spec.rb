@@ -186,4 +186,20 @@ describe "DemoController", type: :request do
       subject
     end
   end
+
+  describe "#response_500" do
+    before do
+      stub_request(:get, "https://httpbin.org/status/200")
+    end
+
+    subject do
+      get "/demo/response_500"
+    end
+
+    it "renders HTTP code 500" do
+      subject
+
+      expect(response).to have_http_status 500
+    end
+  end
 end

@@ -16,6 +16,8 @@ Rails.application.routes.draw do
 
   get "demo/perform_async_job"
 
+  get "demo/response_500"
+
   # Defines the root path route ("/")
   root "demo#ping"
 end
