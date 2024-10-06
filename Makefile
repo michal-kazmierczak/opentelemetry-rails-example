@@ -1,4 +1,4 @@
-dc=docker-compose
+dc=docker compose
 
 up:
 	$(dc) up -d
