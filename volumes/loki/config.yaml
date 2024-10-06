@@ -7,10 +7,10 @@ memberlist:
     - loki:7946
 schema_config:
   configs:
-    - from: 2021-08-01
+    - from: 2023-01-01
       store: tsdb
       object_store: s3
-      schema: v12
+      schema: v13
       index:
         prefix: index_
         period: 24h
