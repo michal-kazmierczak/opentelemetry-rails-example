@@ -3,6 +3,7 @@ receivers:
     protocols:
       grpc:
       http:
+        endpoint: otelcol:4318
         cors:
           allowed_origins:
             - "http://*"
