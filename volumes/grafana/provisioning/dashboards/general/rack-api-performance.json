@@ -63,6 +63,7 @@
         "graphMode": "area",
         "justifyMode": "auto",
         "orientation": "auto",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "mean"
@@ -70,10 +71,11 @@
           "fields": "",
           "values": false
         },
+        "showPercentChange": false,
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "10.2.3",
+      "pluginVersion": "11.2.1",
       "targets": [
         {
           "datasource": {
@@ -135,6 +137,7 @@
         "graphMode": "area",
         "justifyMode": "auto",
         "orientation": "auto",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "lastNotNull"
@@ -142,10 +145,11 @@
           "fields": "",
           "values": false
         },
+        "showPercentChange": false,
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "10.2.3",
+      "pluginVersion": "11.2.1",
       "targets": [
         {
           "datasource": {
@@ -167,6 +171,7 @@
     },
     {
       "datasource": {
+        "default": true,
         "type": "prometheus",
         "uid": "PBFA97CFB590B2093"
       },
@@ -220,7 +225,7 @@
           "layout": "le"
         },
         "tooltip": {
-          "show": true,
+          "mode": "single",
           "showColorScale": false,
           "yHistogram": false
         },
@@ -230,7 +235,7 @@
           "unit": "s"
         }
       },
-      "pluginVersion": "10.2.3",
+      "pluginVersion": "11.2.1",
       "targets": [
         {
           "datasource": {
@@ -240,7 +245,7 @@
           "editorMode": "code",
           "expr": "sum by (le) (rate(rack_server_request_duration_seconds_bucket{path!=\"/health\",method!=\"options\",path=~\"$path\"}[$__rate_interval]))",
           "format": "heatmap",
-          "legendFormat": "{{le}}",
+          "legendFormat": "__auto",
           "range": true,
           "refId": "A"
         }
@@ -290,6 +295,7 @@
         "graphMode": "area",
         "justifyMode": "auto",
         "orientation": "auto",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "lastNotNull"
@@ -297,10 +303,11 @@
           "fields": "",
           "values": false
         },
+        "showPercentChange": false,
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "10.2.3",
+      "pluginVersion": "11.2.1",
       "targets": [
         {
           "datasource": {
@@ -464,7 +471,7 @@
           }
         ]
       },
-      "pluginVersion": "10.2.3",
+      "pluginVersion": "11.2.1",
       "targets": [
         {
           "datasource": {
@@ -634,6 +641,7 @@
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
+            "barWidthFactor": 0.6,
             "drawStyle": "line",
             "fillOpacity": 5,
             "gradientMode": "none",
@@ -734,6 +742,7 @@
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
+            "barWidthFactor": 0.6,
             "drawStyle": "line",
             "fillOpacity": 5,
             "gradientMode": "none",
@@ -827,6 +836,7 @@
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
+            "barWidthFactor": 0.6,
             "drawStyle": "line",
             "fillOpacity": 5,
             "gradientMode": "none",
@@ -918,7 +928,7 @@
     "list": [
       {
         "current": {
-          "selected": false,
+          "selected": true,
           "text": [
             "All"
           ],
@@ -950,13 +960,13 @@
     ]
   },
   "time": {
-    "from": "2024-01-21T20:47:13.983Z",
-    "to": "2024-01-21T20:53:42.842Z"
+    "from": "now-15m",
+    "to": "now"
   },
   "timepicker": {},
   "timezone": "",
   "title": "Rack API Performance",
   "uid": "7NAwfw5ab",
-  "version": 14,
+  "version": 1,
   "weekStart": ""
 }
