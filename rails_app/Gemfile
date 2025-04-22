@@ -1,7 +1,7 @@
 source "https://rubygems.org"
 
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
-gem "rails", "~> 7.1"
+gem "rails", "~> 8.0"
 
 # The original asset pipeline for Rails [https://github.com/rails/sprockets-rails]
 gem "sprockets-rails"
@@ -41,7 +41,6 @@ gem "opentelemetry-instrumentation-pg"
 gem "opentelemetry-instrumentation-rack"
 gem "opentelemetry-instrumentation-rails"
 gem "opentelemetry-instrumentation-redis"
-gem "opentelemetry-instrumentation-sidekiq"
 
 # metrics
 gem "statsd-rack-instrument"
@@ -62,4 +61,4 @@ end
 group :test do
 end
 
-gem "sidekiq", "~> 6.5.12"
+gem "solid_queue", "~> 1.1"

@@ -1,23 +1,33 @@
 default: &default
+  adapter: postgresql
+  encoding: unicode
   host: <%= ENV.fetch('DATABASE_HOST') { 'postgres' } %>
   port: <%= ENV.fetch('DATABASE_PORT') { 5432 } %>
   username: <%= ENV.fetch('DATABASE_USERNAME') { 'postgres' } %>
   password: <%= ENV.fetch('DATABASE_PASSWORD') { 'postgres' } %>
-  adapter: postgresql
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
   timeout: 5000
 
 development:
-  <<: *default
-  database: opentelemetry_rails_dev
+  primary:
+    <<: *default
+    database: opentelemetry_rails_dev
+    <% if RUBY_PLATFORM =~ /darwin/ %>gssencmode: disable<% end %>
+  queue:
+    <<: *default
+    database: opentelemetry_rails_dev_queue
+    <% if RUBY_PLATFORM =~ /darwin/ %>gssencmode: disable<% end %>
 
-# Warning: The database defined as "test" will be erased and
-# re-generated from your development database when you run "rake".
-# Do not set this db to the same as development or production.
 test:
   <<: *default
   database: opentelemetry_rails_test
 
 production:
-  <<: *default
-  database: opentelemetry_rails
+  primary: &primary_production
+    <<: *default
+    database: opentelemetry_rails_production
+    host: <%= ENV["DB_HOST"] %>
+    port: <%= ENV["DB_PORT"] %>
+  queue:
+    <<: *primary_production
+    database: opentelemetry_rails_production_queue

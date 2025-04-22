@@ -65,7 +65,7 @@ class DemoController < ApplicationController
   end
 
   def perform_async_job
-    BusyJob.perform_async
+    BusyJob.perform_later
 
     render json: { message: 'ok!' }
   end
@@ -75,7 +75,7 @@ class DemoController < ApplicationController
     uri = URI("https://httpbin.org/status/200")
     Net::HTTP.get(uri)
 
-    vegetables_count = Vegetable.count
+    _vegetables_count = Vegetable.count
 
     raise StandardError, "this is on purpose"
   end

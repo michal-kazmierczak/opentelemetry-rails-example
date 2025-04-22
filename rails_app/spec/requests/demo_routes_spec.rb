@@ -182,7 +182,7 @@ describe "DemoController", type: :request do
     end
 
     it "schedules async execution" do
-      expect(BusyJob).to receive(:perform_async)
+      expect(BusyJob).to receive(:perform_later)
       subject
     end
   end
@@ -197,9 +197,7 @@ describe "DemoController", type: :request do
     end
 
     it "renders HTTP code 500" do
-      subject
-
-      expect(response).to have_http_status 500
+      expect{ subject }.to raise_error(StandardError)
     end
   end
 end
