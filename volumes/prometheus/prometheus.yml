@@ -3,6 +3,10 @@ global:
   evaluation_interval: 5s
 
 scrape_configs:
+  - job_name: 'spanmetrics'
+    static_configs:
+      - targets: ['otelcol:8889']
+
   - job_name: prometheus
     static_configs:
       - targets: [ prometheus:9090 ]
@@ -10,7 +14,3 @@ scrape_configs:
   - job_name: tempo
     static_configs:
       - targets: [ 'tempo:3200' ]
-
-  - job_name: statsd
-    static_configs:
-      - targets: [ 'statsd-exporter:9102' ]

@@ -38,6 +38,7 @@
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
+            "barWidthFactor": 0.6,
             "drawStyle": "bars",
             "fillOpacity": 0,
             "gradientMode": "none",
@@ -68,8 +69,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -100,20 +100,22 @@
           "sortDesc": true
         },
         "tooltip": {
+          "hideZeros": false,
           "maxHeight": 600,
           "mode": "single",
           "sort": "none"
         }
       },
-      "pluginVersion": "10.4.1",
+      "pluginVersion": "11.6.0",
       "targets": [
         {
           "datasource": {
             "type": "loki",
             "uid": "P8E80F9AEF21F6940"
           },
+          "direction": "backward",
           "editorMode": "code",
-          "expr": "sum by (container) (\n    rate(({container=~\"${container}\"} |~ \"(?i)${log_level}\")[1m])\n)",
+          "expr": "sum by (container_name) (\n    rate(({container_name=~\"${container_name}\"} |~ \"(?i)${log_level}\")[1m])\n)",
           "legendFormat": "{{container}}",
           "queryType": "range",
           "refId": "A"
@@ -127,6 +129,10 @@
         "type": "loki",
         "uid": "P8E80F9AEF21F6940"
       },
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
       "gridPos": {
         "h": 22,
         "w": 24,
@@ -136,6 +142,7 @@
       "id": 3,
       "options": {
         "dedupStrategy": "none",
+        "enableInfiniteScrolling": false,
         "enableLogDetails": true,
         "prettifyLogMessage": false,
         "showCommonLabels": true,
@@ -144,14 +151,16 @@
         "sortOrder": "Descending",
         "wrapLogMessage": true
       },
+      "pluginVersion": "11.6.0",
       "targets": [
         {
           "datasource": {
             "type": "loki",
             "uid": "P8E80F9AEF21F6940"
           },
+          "direction": "backward",
           "editorMode": "code",
-          "expr": "{container=~\"${container}\"} |~ \"(?i)${log_level}\"",
+          "expr": "{container_name=~\"${container_name}\"} |~ \"(?i)${log_level}\"",
           "queryType": "range",
           "refId": "A"
         }
@@ -160,14 +169,14 @@
       "type": "logs"
     }
   ],
+  "preload": false,
   "refresh": "",
-  "schemaVersion": 39,
+  "schemaVersion": 41,
   "tags": [],
   "templating": {
     "list": [
       {
         "current": {
-          "selected": true,
           "text": [
             "All"
           ],
@@ -180,32 +189,26 @@
           "uid": "P8E80F9AEF21F6940"
         },
         "definition": "",
-        "hide": 0,
         "includeAll": true,
         "multi": true,
-        "name": "container",
+        "name": "container_name",
         "options": [],
         "query": {
-          "label": "container",
+          "label": "container_name",
           "refId": "LokiVariableQueryEditor-VariableQuery",
           "stream": "",
           "type": 1
         },
         "refresh": 1,
         "regex": "",
-        "skipUrlSync": false,
-        "sort": 0,
         "type": "query"
       },
       {
         "current": {
-          "selected": true,
           "text": ".*",
           "value": ".*"
         },
-        "hide": 0,
         "includeAll": false,
-        "multi": false,
         "name": "log_level",
         "options": [
           {
@@ -235,8 +238,6 @@
           }
         ],
         "query": ".*,debug,info,warn,error",
-        "queryValue": "",
-        "skipUrlSync": false,
         "type": "custom"
       }
     ]
@@ -245,11 +246,9 @@
     "from": "now-10m",
     "to": "now"
   },
-  "timeRangeUpdatedDuringEditOrView": false,
   "timepicker": {},
   "timezone": "utc",
   "title": "Log volume",
   "uid": "fdgx4ajdqmnswa",
-  "version": 6,
-  "weekStart": ""
+  "version": 1
 }

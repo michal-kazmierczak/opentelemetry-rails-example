@@ -1,23 +1,63 @@
+
 receivers:
   otlp:
     protocols:
-      grpc:
       http:
         endpoint: otelcol:4318
-        cors:
-          allowed_origins:
-            - "http://*"
-            - "https://*"
 
 exporters:
-  debug:
-  otlp:
-    endpoint: "tempo:4317"
+  otlp/tempo:
+    endpoint: tempo:4317
     tls:
       insecure: true
+  prometheus:
+    endpoint: 0.0.0.0:8889
+
+processors:
+  tail_sampling/traces:
+    decision_wait: 10s
+    policies:
+      - name: drop_noise
+        type: latency
+        latency:
+          threshold_ms: 10
+
+  filter/spans_for_metrics:
+    traces:
+      span:
+        - >
+          instrumentation_scope.name != "OpenTelemetry::Instrumentation::Rack" and
+          instrumentation_scope.name != "OpenTelemetry::Instrumentation::PG" and
+          instrumentation_scope.name != "OpenTelemetry::Instrumentation::ActiveJob"
+
+connectors:
+  spanmetrics:
+    histogram:
+      explicit:
+        buckets: [2ms, 4ms, 6ms, 8ms, 10ms, 50ms, 100ms, 200ms, 400ms, 800ms, 1s, 1400ms, 2s, 5s, 10s, 15s] # the default
+    dimensions:
+      - name: code.namespace
+      - name: code.function
+      - name: messaging.destination
+      - name: messaging.active_job.adapter.name
+      - name: http.route
+      - name: http.status_code
+      - name: db.system
+    exemplars:
+      enabled: true
 
 service:
   pipelines:
-    traces:
+    traces/all:
       receivers: [otlp]
-      exporters: [otlp, debug]
+      processors: [tail_sampling/traces]
+      exporters: [otlp/tempo]
+
+    traces/for_metrics:
+      receivers: [otlp]
+      processors: [filter/spans_for_metrics]
+      exporters: [spanmetrics]
+
+    metrics/from_spans:
+      receivers: [spanmetrics]
+      exporters: [prometheus]

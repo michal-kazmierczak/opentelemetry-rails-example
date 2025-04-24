@@ -26,8 +26,6 @@ production:
   primary: &primary_production
     <<: *default
     database: opentelemetry_rails_production
-    host: <%= ENV["DB_HOST"] %>
-    port: <%= ENV["DB_PORT"] %>
   queue:
     <<: *primary_production
     database: opentelemetry_rails_production_queue

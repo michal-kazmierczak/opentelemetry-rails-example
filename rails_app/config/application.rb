@@ -2,6 +2,9 @@ require_relative "boot"
 
 require "rails/all"
 
+require_relative "../lib/middleware/telemetry_semantic_logging_middleware"
+require_relative "../lib/middleware/traceparent_header_middleware"
+
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
@@ -26,8 +29,11 @@ module OpentelemetryRailsExample
     # config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("extras")
 
-    config.log_tags = {
-      request_id: :uuid
-    }
+    config.log_tags = [:request_id]
+    # Send logs to STDOUT (useful for Docker/Kubernetes)
+    config.rails_semantic_logger.add_file_appender = false
+
+    config.middleware.use Middleware::TraceparentHeaderMiddleware
+    config.middleware.insert_before Rails::Rack::Logger, Middleware::TelemetrySemanticLoggingMiddleware
   end
 end

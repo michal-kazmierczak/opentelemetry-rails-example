@@ -7,6 +7,7 @@ distributor:
     otlp:
       protocols:
         grpc:
+          endpoint: "0.0.0.0:4317"
   log_received_spans:
     enabled: true
 

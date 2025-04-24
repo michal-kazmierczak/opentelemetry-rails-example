@@ -1,0 +1,43 @@
+sources:
+  docker:
+    type: "docker_logs"
+
+transforms:
+  parse_json:
+    type: "remap"
+    inputs: ["docker"]
+    source: |
+      payload, err = parse_json(string!(.message))
+      if err == null {
+        .payload = payload
+        del(.message)
+
+        # Promote fields to top-level
+        .level = payload.level || payload.severity
+
+        # Remove promoted fields from the payload to avoid duplication
+        del(.payload.level)
+        del(.payload.severity)
+      }
+
+      .level = .level || "unknown"
+
+      # Remove not needed fields
+      del(.label)
+      del(.container_created_at)
+      del(.container_id)
+      del(.image)
+      del(.host)
+
+sinks:
+  loki:
+    type: "loki"
+    inputs: ["parse_json"]
+    endpoint: "http://loki:3100"
+    compression: "snappy"
+    encoding:
+      codec: "logfmt"
+    labels:
+      app: "opentelemetry-rails-example"
+      container_name: "{{ container_name }}"
+      level: "{{ level }}"

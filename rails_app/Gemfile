@@ -40,7 +40,6 @@ gem "opentelemetry-instrumentation-net_http"
 gem "opentelemetry-instrumentation-pg"
 gem "opentelemetry-instrumentation-rack"
 gem "opentelemetry-instrumentation-rails"
-gem "opentelemetry-instrumentation-redis"
 
 # metrics
 gem "statsd-rack-instrument"

@@ -51,14 +51,6 @@ Rails.application.configure do
   # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
   config.force_ssl = false # FIXME: only for the presentation purposes
 
-  # Log to STDOUT by default
-  config.logger = ActiveSupport::Logger.new(STDOUT)
-    .tap  { |logger| logger.formatter = ::Logger::Formatter.new }
-    .then { |logger| ActiveSupport::TaggedLogging.new(logger) }
-
-  # Prepend all log lines with the following tags.
-  # config.log_tags = [ :request_id ]
-
   # Info include generic and useful information about system operation, but avoids logging too much
   # information to avoid inadvertent exposure of personally identifiable information (PII). If you
   # want to log everything, set the level to "debug".
@@ -68,8 +60,8 @@ Rails.application.configure do
   # config.cache_store = :mem_cache_store
 
   # Use a real queuing backend for Active Job (and separate queues per environment).
-  # config.active_job.queue_adapter     = :resque
-  # config.active_job.queue_name_prefix = "opentelemetry_rails_example_production"
+  config.active_job.queue_adapter = :solid_queue
+  config.solid_queue.connects_to = { database: { writing: :queue } }
 
   config.action_mailer.perform_caching = false
 
@@ -94,6 +86,12 @@ Rails.application.configure do
   # ]
   # Skip DNS rebinding protection for the default health check endpoint.
   # config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
+  #
+  config.semantic_logger.add_appender(
+    io: STDOUT,
+    level: Rails.application.config.log_level,
+    formatter: :json
+  )
 end
 
 
