@@ -3,10 +3,7 @@ auth_enabled: false
 
 server:
   http_listen_port: 3100
-
-memberlist:
-  join_members:
-    - localhost:7946
+  grpc_listen_port: 9095
 
 schema_config:
   configs:
@@ -21,6 +18,7 @@ schema_config:
 common:
   path_prefix: /loki
   replication_factor: 1
+  compactor_address: http://loki:3100
   storage:
     s3:
       endpoint: minio:9000
@@ -29,15 +27,26 @@ common:
       access_key_id: minio
       secret_access_key: supersecret
       s3forcepathstyle: true
-  ring:
-    kvstore:
-      store: memberlist
 
 ingester:
+  lifecycler:
+    ring:
+      kvstore:
+        store: inmemory
+      replication_factor: 1
+    final_sleep: 0s
+  chunk_idle_period: 5m
+  chunk_retain_period: 30s
   wal:
     enabled: true
+    dir: /loki/ingester-wal
+    flush_on_shutdown: true
+
 
 ruler:
   storage:
     s3:
       bucketnames: loki-ruler
+
+compactor:
+  working_directory: /tmp/compactor
