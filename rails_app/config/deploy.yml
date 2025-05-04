@@ -28,6 +28,7 @@ env:
     OTEL_EXPORTER_OTLP_ENDPOINT: http://opentelemetry-rails-example-otelcol:4318
   secret:
     - RAILS_MASTER_KEY
+    - POSTGRES_USER
     - POSTGRES_PASSWORD
 
 volumes:
@@ -98,7 +99,7 @@ accessories:
       traefik.http.routers.grafana.tls.certresolver: "myresolver"
       traefik.http.services.grafana.loadbalancer.server.port: "3000"
 
-  # needed to serve Grafana over HTTPS, kamal-proxy couldn't resolve Grafana healthcheck
+  # needed to serve Grafana over HTTPS, kamal-proxy couldn't resolve Grafana's healthcheck
   traefik:
     image: traefik:v2.11
     roles:
