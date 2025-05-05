@@ -78,7 +78,10 @@ accessories:
       - config/deploy/opentelemetry-collector/otelcol-config.yml:/etc/otelcol-config.yml
     volumes:
       - /:/hostfs # for hostmetrics
-    port: 4318
+    options:
+      publish:
+        - 4318:4318
+        - 8889:8889
 
   # the accessories below serve as storage backends for telemetry data
   # and provide APIs that Grafana can query for visualization
@@ -144,6 +147,18 @@ accessories:
     files:
       - config/deploy/tempo/tempo.yaml:/etc/tempo.yaml
     port: 3200
+
+  prometheus:
+    image: prom/prometheus:v3.3.1
+    roles:
+      - observability
+    network: host
+    cmd: >
+      --config.file=/etc/prometheus/prometheus.yml
+      --storage.tsdb.path=/prometheus
+      --storage.tsdb.retention.time=30d
+    files:
+      - config/deploy/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
 
   # general purpose object storage
   minio:
