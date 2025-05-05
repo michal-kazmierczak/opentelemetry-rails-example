@@ -10,6 +10,7 @@ servers:
     proxy:
       host: <%= ENV["HOST"] %>
       app_port: 3000
+      ssl: true
   job:
     hosts:
       - <%= ENV["WEB_AND_JOBS_IP"] %>
