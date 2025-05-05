@@ -54,7 +54,7 @@ accessories:
       - postgres-data:/var/lib/postgresql/data
 
   # vector and opentelemetry-collector are agents running next to the application
-  # to collect logs, traces, and metrics (telemetry signals), process, and export them
+  # to collect logs, traces, and metrics (telemetry signals), process them, and export
   vector:
     image: timberio/vector:0.46.1-alpine
     roles:
@@ -129,6 +129,16 @@ accessories:
     files:
       - config/deploy/loki/config.yaml:/etc/loki/config.yaml
     port: 3100
+
+  tempo:
+    image: grafana/tempo:2.7.2
+    roles:
+      - observability
+    network: host
+    cmd: "-config.file=/etc/tempo.yaml"
+    files:
+      - config/deploy/tempo/tempo.yaml:/etc/tempo.yaml
+    port: 3200
 
   # general purpose object storage
   minio:
