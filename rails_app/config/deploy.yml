@@ -53,7 +53,7 @@ accessories:
     directories:
       - postgres-data:/var/lib/postgresql/data
 
-  # vector and opentelemetry-collector are agents running next to the application
+  # vector and otelcol are agents running next to the application
   # to collect logs, traces, and metrics (telemetry signals), process them, and export
   vector:
     image: timberio/vector:0.46.1-alpine
@@ -64,10 +64,13 @@ accessories:
     files:
       - config/deploy/vector/vector.yaml:/etc/vector/vector.yaml
 
-  opentelemetry-collector:
+  otelcol:
     image: otel/opentelemetry-collector-contrib:0.123.0
     roles:
       - web
+    env:
+      clear:
+        OTEL_EXPORTER_OTLP_ENDPOINT: opentelemetry-rails-example-otelcol:4318
     cmd: "--config=/etc/otelcol-config.yml"
     files:
       - config/deploy/opentelemetry-collector/otelcol-config.yml:/etc/otelcol-config.yml

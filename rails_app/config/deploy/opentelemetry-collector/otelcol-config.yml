@@ -3,7 +3,7 @@ receivers:
   otlp:
     protocols:
       http:
-        endpoint: otelcol:4318
+        endpoint: ${OTEL_EXPORTER_OTLP_ENDPOINT}
 
 exporters:
   otlp/tempo:
