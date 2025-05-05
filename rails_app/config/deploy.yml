@@ -44,6 +44,8 @@ accessories:
       - <%= ENV["DB_IP"] %>
     port: 5432
     env:
+      clear:
+        PGDATA: /var/lib/postgresql/pg-data
       secret:
         - POSTGRES_PASSWORD
     files:
@@ -51,7 +53,7 @@ accessories:
       - config/deploy/postgres/postgresql.conf:/var/lib/postgresql/data/postgresql.conf
       - config/deploy/postgres/pg_hba.conf:/var/lib/postgresql/data/pg_hba.conf
     directories:
-      - postgres-data:/var/lib/postgresql/data
+      - postgres-data:/var/lib/postgresql/pg-data
 
   # vector and otelcol are agents running next to the application
   # to collect logs, traces, and metrics (telemetry signals), process them, and export
@@ -164,8 +166,11 @@ accessories:
     volumes:
       - data:/data
 
+# usage: dotenv kamal <alias>
 aliases:
   console: app exec -i --reuse "bin/rails console"
+  psql: accessory exec db -i "psql postgresql://<%= ENV["POSTGRES_USER"] %>:<%= ENV["POSTGRES_PASSWORD"] %>@opentelemetry-rails-example-db/opentelemetry_rails_production"
+  psql-queue: accessory exec db -i "psql postgresql://<%= ENV["POSTGRES_USER"] %>:<%= ENV["POSTGRES_PASSWORD"] %>@opentelemetry-rails-example-db/opentelemetry_rails_production_queue"
 
 builder:
   arch: x86_64
