@@ -4,6 +4,19 @@ receivers:
     protocols:
       http:
         endpoint: ${OTEL_EXPORTER_OTLP_ENDPOINT}
+  hostmetrics:
+    collection_interval: 10s
+    root_path: /hostfs
+    scrapers:
+      cpu:
+      memory:
+      disk:
+      filesystem:
+      load:
+      network:
+      paging:
+      processes:
+      system:
 
 exporters:
   otlp/tempo:
@@ -60,4 +73,8 @@ service:
 
     metrics/from_spans:
       receivers: [spanmetrics]
+      exporters: [prometheus]
+
+    metrics/host:
+      receivers: [hostmetrics]
       exporters: [prometheus]
