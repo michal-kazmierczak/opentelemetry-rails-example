@@ -1,12 +1,8 @@
 global:
-  scrape_interval: 5s
-  evaluation_interval: 5s
+  scrape_interval: 15s
+  evaluation_interval: 15s
 
 scrape_configs:
-  - job_name: 'spanmetrics'
-    static_configs:
-      - targets: ['otelcol:8889']
-
   - job_name: prometheus
     static_configs:
       - targets: [ prometheus:9090 ]
@@ -14,3 +10,6 @@ scrape_configs:
   - job_name: tempo
     static_configs:
       - targets: [ 'tempo:3200' ]
+
+remote_write:
+  - url: http://prometheus:9090/api/v1/write

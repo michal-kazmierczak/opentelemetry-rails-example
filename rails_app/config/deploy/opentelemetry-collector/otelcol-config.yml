@@ -23,8 +23,10 @@ exporters:
     endpoint: tempo:4317
     tls:
       insecure: true
-  prometheus:
-    endpoint: 0.0.0.0:8889
+  prometheusremotewrite:
+    endpoint: http://prometheus:9090/api/v1/write
+    external_labels:
+      app: opentelemetry-rails-example # might be useful to set dynamically in case of multiple apps
 
 processors:
   tail_sampling/traces:
@@ -42,6 +44,10 @@ processors:
           instrumentation_scope.name != "OpenTelemetry::Instrumentation::Rack" and
           instrumentation_scope.name != "OpenTelemetry::Instrumentation::PG" and
           instrumentation_scope.name != "OpenTelemetry::Instrumentation::ActiveJob"
+
+  batch:
+    timeout: 15s
+    send_batch_size: 1000
 
 connectors:
   spanmetrics:
@@ -74,8 +80,10 @@ service:
 
     metrics/from_spans:
       receivers: [spanmetrics]
-      exporters: [prometheus]
+      processors: [batch]
+      exporters: [prometheusremotewrite]
 
     metrics/host:
       receivers: [hostmetrics]
-      exporters: [prometheus]
+      processors: [batch]
+      exporters: [prometheusremotewrite]

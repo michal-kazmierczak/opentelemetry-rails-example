@@ -85,6 +85,43 @@ accessories:
 
   # the accessories below serve as storage backends for telemetry data
   # and provide APIs that Grafana can query for visualization
+  loki:
+    image: grafana/loki:3.4.3
+    roles:
+      - observability
+    network: host
+    cmd: "-config.file=/etc/loki/config.yaml"
+    files:
+      - config/deploy/loki/config.yaml:/etc/loki/config.yaml
+    port: 3100
+
+  tempo:
+    image: grafana/tempo:2.7.2
+    roles:
+      - observability
+    network: host
+    cmd: "-config.file=/etc/tempo.yaml"
+    files:
+      - config/deploy/tempo/tempo.yaml:/etc/tempo.yaml
+    port: 3200
+
+  prometheus:
+    image: prom/prometheus:v3.3.1
+    roles:
+      - observability
+    network: host
+    cmd: >
+      --config.file=/etc/prometheus/prometheus.yml
+      --storage.tsdb.path=/prometheus
+      --storage.tsdb.retention.time=30d
+      --web.enable-remote-write-receiver
+    files:
+      - config/deploy/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    directories:
+      # required: sudo chown -R 65534:65534 opentelemetry-rails-example-prometheus/data
+      # to fix: err="open /prometheus/queries.active: permission denied"
+      - data:/prometheus
+
   grafana:
     image: grafana/grafana:11.6.0
     roles:
@@ -127,42 +164,6 @@ accessories:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /var/lib/traefik:/letsencrypt
-
-  loki:
-    image: grafana/loki:3.4.3
-    roles:
-      - observability
-    network: host
-    cmd: "-config.file=/etc/loki/config.yaml"
-    files:
-      - config/deploy/loki/config.yaml:/etc/loki/config.yaml
-    port: 3100
-
-  tempo:
-    image: grafana/tempo:2.7.2
-    roles:
-      - observability
-    network: host
-    cmd: "-config.file=/etc/tempo.yaml"
-    files:
-      - config/deploy/tempo/tempo.yaml:/etc/tempo.yaml
-    port: 3200
-
-  prometheus:
-    image: prom/prometheus:v3.3.1
-    roles:
-      - observability
-    network: host
-    cmd: >
-      --config.file=/etc/prometheus/prometheus.yml
-      --storage.tsdb.path=/prometheus
-      --storage.tsdb.retention.time=30d
-    files:
-      - config/deploy/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
-    directories:
-      # required: sudo chown -R 65534:65534 opentelemetry-rails-example-prometheus/data
-      # to fix: err="open /prometheus/queries.active: permission denied"
-      - data:/prometheus
 
   # general purpose object storage
   minio:
