@@ -100,7 +100,7 @@ accessories:
       - config/deploy/grafana/provisioning/datasources/default.yaml:/etc/grafana/provisioning/datasources/default.yaml
       - config/deploy/grafana/provisioning/dashboards/general.yaml:/etc/grafana/provisioning/dashboards/general.yaml
       - config/deploy/grafana/provisioning/dashboards/general/log-volume.json:/etc/grafana/provisioning/dashboards/general/log-volume.json
-      - config/deploy/grafana/provisioning/dashboards/general/rack-api-performance.json:/etc/grafana/provisioning/dashboards/general/rack-api-performance.json
+      - config/deploy/grafana/provisioning/dashboards/general/rails-http-overview.json:/etc/grafana/provisioning/dashboards/general/rails-http-overview.json
     labels:
       traefik.enable: true
       traefik.http.routers.grafana.rule: "Host(`grafana-otel-rails-example.mkaz.me`)"
