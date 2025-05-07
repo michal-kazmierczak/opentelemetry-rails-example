@@ -3,4 +3,8 @@ volumes/postgres/*
 volumes/minio/*
 volumes/tempo/data/*
 
+rails_app/config/deploy/postgres/*
+rails_app/config/deploy/minio/*
+rails_app/config/deploy/tempo/data/*
+
 volumes/redis/dump.rdb
