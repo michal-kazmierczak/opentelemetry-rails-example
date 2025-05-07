@@ -55,6 +55,7 @@ connectors:
       - name: messaging.active_job.adapter.name
       - name: http.route
       - name: http.status_code
+      - name: http.method
       - name: db.system
     exemplars:
       enabled: true
