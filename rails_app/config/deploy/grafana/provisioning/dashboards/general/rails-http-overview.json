@@ -24,7 +24,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 1,
+  "id": 2,
   "links": [],
   "panels": [
     {
@@ -379,7 +379,7 @@
             "properties": [
               {
                 "id": "unit",
-                "value": "s"
+                "value": "ms"
               },
               {
                 "id": "custom.width",
@@ -399,7 +399,7 @@
               },
               {
                 "id": "unit",
-                "value": "s"
+                "value": "ms"
               }
             ]
           },
@@ -411,7 +411,7 @@
             "properties": [
               {
                 "id": "unit",
-                "value": "s"
+                "value": "ms"
               },
               {
                 "id": "custom.width",
@@ -477,7 +477,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "histogram_quantile(0.5, sum(rate(traces_span_metrics_duration_milliseconds_bucket[2m])) by (le,http_route,http_method))",
+          "expr": "histogram_quantile(0.5, sum(rate(traces_span_metrics_duration_milliseconds_bucket{http_route!=\"\"}[2m])) by (le,http_route,http_method))",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -492,7 +492,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "histogram_quantile(0.95, sum(rate(traces_span_metrics_duration_milliseconds_bucket[2m])) by (le,http_route,http_method))",
+          "expr": "histogram_quantile(0.95, sum(rate(traces_span_metrics_duration_milliseconds_bucket{http_route!=\"\"}[2m])) by (le,http_route,http_method))",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -507,7 +507,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "histogram_quantile(0.99, sum(rate(traces_span_metrics_duration_milliseconds_bucket[2m])) by (le,http_route,http_method))",
+          "expr": "histogram_quantile(0.99, sum(rate(traces_span_metrics_duration_milliseconds_bucket{http_route!=\"\"}[2m])) by (le,http_route,http_method))",
           "format": "table",
           "hide": false,
           "instant": true,
