@@ -10,6 +10,3 @@ scrape_configs:
   - job_name: tempo
     static_configs:
       - targets: [ 'tempo:3200' ]
-
-remote_write:
-  - url: http://prometheus:9090/api/v1/write
