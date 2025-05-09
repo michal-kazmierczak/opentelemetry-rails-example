@@ -3,15 +3,30 @@ receivers:
   otlp:
     protocols:
       http:
-        endpoint: otelcol:4318
+        endpoint: ${OTEL_EXPORTER_OTLP_ENDPOINT}
+  hostmetrics:
+    collection_interval: 10s
+    root_path: /hostfs
+    scrapers:
+      cpu:
+      memory:
+      disk:
+      filesystem:
+      load:
+      network:
+      paging:
+      processes:
+      system:
 
 exporters:
   otlp/tempo:
     endpoint: tempo:4317
     tls:
       insecure: true
-  prometheus:
-    endpoint: 0.0.0.0:8889
+  prometheusremotewrite:
+    endpoint: http://prometheus:9090/api/v1/write
+    external_labels:
+      app: opentelemetry-rails-example # might be useful to set dynamically in case of multiple apps
 
 processors:
   tail_sampling/traces:
@@ -30,6 +45,10 @@ processors:
           instrumentation_scope.name != "OpenTelemetry::Instrumentation::PG" and
           instrumentation_scope.name != "OpenTelemetry::Instrumentation::ActiveJob"
 
+  batch:
+    timeout: 15s
+    send_batch_size: 1000
+
 connectors:
   spanmetrics:
     histogram:
@@ -42,6 +61,7 @@ connectors:
       - name: messaging.active_job.adapter.name
       - name: http.route
       - name: http.status_code
+      - name: http.method
       - name: db.system
     exemplars:
       enabled: true
@@ -60,4 +80,10 @@ service:
 
     metrics/from_spans:
       receivers: [spanmetrics]
-      exporters: [prometheus]
+      processors: [batch]
+      exporters: [prometheusremotewrite]
+
+    metrics/host:
+      receivers: [hostmetrics]
+      processors: [batch]
+      exporters: [prometheusremotewrite]

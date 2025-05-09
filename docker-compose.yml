@@ -52,8 +52,8 @@ services:
   grafana:
     image: grafana/grafana:11.6.0
     volumes:
-      - ./volumes/grafana/grafana.ini:/etc/grafana/grafana.ini
-      - ./volumes/grafana/provisioning:/etc/grafana/provisioning
+      - ./rails_app/config/deploy/grafana/grafana.ini:/etc/grafana/grafana.ini
+      - ./rails_app/config/deploy/grafana/provisioning:/etc/grafana/provisioning
     environment:
       - GF_AUTH_ANONYMOUS_ENABLED=true # suitable only for local testing
       - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
@@ -64,7 +64,7 @@ services:
   vector:
     image: timberio/vector:0.46.1-alpine
     volumes:
-      - ./volumes/vector/vector.yaml:/etc/vector/vector.yaml
+      - ./rails_app/config/deploy/vector/vector.yaml:/etc/vector/vector.yaml
       - /var/run/docker.sock:/var/run/docker.sock
     depends_on:
       - loki
@@ -73,7 +73,7 @@ services:
     image: grafana/loki:3.5.0
     command: [ "-config.file=/etc/loki/config.yaml" ]
     volumes:
-      - ./volumes/loki/config.yaml:/etc/loki/config.yaml
+      - ./rails_app/config/deploy/loki/config.yaml:/etc/loki/config.yaml
     ports:
       - "3100:3100"
     depends_on:
@@ -83,8 +83,11 @@ services:
   otelcol:
     image: otel/opentelemetry-collector-contrib:0.123.0
     command: [ "--config=/etc/otelcol-config.yml" ]
+    environment:
+      - OTEL_EXPORTER_OTLP_ENDPOINT=otelcol:4318
     volumes:
-      - ./volumes/opentelemetry-collector/otelcol-config.yml:/etc/otelcol-config.yml
+      - ./rails_app/config/deploy/opentelemetry-collector/otelcol-config.yml:/etc/otelcol-config.yml
+      - /:/hostfs
     depends_on:
       - tempo
       - prometheus
@@ -93,8 +96,8 @@ services:
     image: grafana/tempo:2.7.2
     command: [ "-config.file=/etc/tempo.yaml" ]
     volumes:
-      - ./volumes/tempo/tempo.yaml:/etc/tempo.yaml
-      - ./volumes/tempo/data:/tmp/tempo
+      - ./rails_app/config/deploy/tempo/tempo.yaml:/etc/tempo.yaml
+      - ./rails_app/config/deploy/tempo/data:/tmp/tempo
     ports:
       - "3200:3200"   # tempo metrics
     depends_on:
@@ -107,10 +110,11 @@ services:
       - '--config.file=/etc/prometheus/prometheus.yml'
       - '--storage.tsdb.path=/prometheus'
       - '--storage.tsdb.retention.time=30d'
+      - '--web.enable-remote-write-receiver'
     ports:
       - "9090:9090"
     volumes:
-      - ./volumes/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./rails_app/config/deploy/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
 
   # general purpose object storage
   minio:
@@ -129,5 +133,5 @@ services:
       - MINIO_PROMETHEUS_AUTH_TYPE=public
       - MINIO_UPDATE=off
     volumes:
-      - ./volumes/minio:/data
+      - ./rails_app/config/deploy/minio:/data
 

@@ -76,6 +76,7 @@ GEM
       public_suffix (>= 2.0.2, < 7.0)
     amazing_print (1.7.2)
     base64 (0.2.0)
+    bcrypt_pbkdf (1.1.1)
     benchmark (0.4.0)
     bigdecimal (3.1.9)
     bindex (0.8.1)
@@ -91,7 +92,9 @@ GEM
     crass (1.0.6)
     date (3.4.1)
     diff-lcs (1.6.1)
+    dotenv (3.1.8)
     drb (2.2.1)
+    ed25519 (1.3.0)
     erubi (1.13.1)
     et-orbi (1.2.11)
       tzinfo
@@ -146,6 +149,17 @@ GEM
     jbuilder (2.13.0)
       actionview (>= 5.0.0)
       activesupport (>= 5.0.0)
+    kamal (2.5.3)
+      activesupport (>= 7.0)
+      base64 (~> 0.2)
+      bcrypt_pbkdf (~> 1.0)
+      concurrent-ruby (~> 1.2)
+      dotenv (~> 3.1)
+      ed25519 (~> 1.2)
+      net-ssh (~> 7.3)
+      sshkit (>= 1.23.0, < 2.0)
+      thor (~> 1.3)
+      zeitwerk (>= 2.6.18, < 3.0)
     listen (3.9.0)
       rb-fsevent (~> 0.10, >= 0.10.3)
       rb-inotify (~> 0.9, >= 0.9.10)
@@ -173,8 +187,13 @@ GEM
       net-protocol
     net-protocol (0.2.2)
       timeout
+    net-scp (4.1.0)
+      net-ssh (>= 2.6.5, < 8.0.0)
+    net-sftp (4.0.0)
+      net-ssh (>= 5.0.0, < 8.0.0)
     net-smtp (0.5.1)
       net-protocol
+    net-ssh (7.3.0)
     nio4r (2.7.4)
     nokogiri (1.18.8)
       mini_portile2 (~> 2.8.2)
@@ -369,6 +388,13 @@ GEM
       actionpack (>= 6.1)
       activesupport (>= 6.1)
       sprockets (>= 3.0.0)
+    sshkit (1.24.0)
+      base64
+      logger
+      net-scp (>= 1.1.2)
+      net-sftp (>= 2.1.2)
+      net-ssh (>= 2.8.0)
+      ostruct
     statsd-instrument (3.9.9)
     statsd-rack-instrument (0.1.0)
       statsd-instrument (~> 3.1)
@@ -408,10 +434,12 @@ PLATFORMS
 DEPENDENCIES
   amazing_print
   bootsnap
+  dotenv
   guard
   guard-rspec
   importmap-rails
   jbuilder
+  kamal (~> 2.5)
   opentelemetry-exporter-otlp
   opentelemetry-instrumentation-net_http
   opentelemetry-instrumentation-pg

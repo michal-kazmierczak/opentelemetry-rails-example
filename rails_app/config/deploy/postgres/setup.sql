@@ -1,0 +1,2 @@
+CREATE DATABASE opentelemetry_rails_production;
+CREATE DATABASE opentelemetry_rails_production_queue;
