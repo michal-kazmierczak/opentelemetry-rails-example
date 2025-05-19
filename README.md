@@ -1,23 +1,22 @@
 
 # OpenTelemetry ∩ Rails <!-- omit in toc -->
 
-A reference repository for instrumenting Rails apps with observability, using self-hosted, open-source tools rather than commercial observability platforms. It’s intended primarily for testing, experimentation, and debugging - not as a guidance for production setups.
+A reference repository for instrumenting Rails apps with observability, using self-hosted, open-source tools rather than commercial observability platforms. It’s intended primarily for testing, experimentation, and debugging - not as an ultimate guidance for production setups.
 
 It's _opinionated_ in the way that included libraries and solutions do have alternatives. The goal is to stay aligned with Open Source and Open Standards.  Suggestions and discussions around alternative approaches are welcome.
 
-The repository is being gradually updated as Open Telemetry SDK and Open Telemetry Contrib Packages for Ruby progress. (Note: as of now, the Ruby OTel SDK lacks full support for metrics and traces.)
+The repository is being gradually updated as Open Telemetry SDK and Open Telemetry Contrib Packages for Ruby progress. (Note: as of now, the Ruby OTel instrumentation for metrics and traces is WIP.)
 
 I recommend visiting [open-telemetry/opentelemetry-demo](https://github.com/open-telemetry/opentelemetry-demo) for a complete example of instrumentation of a distributed system.
 
-## Table of Contents
+## Table of Contents <!-- omit in toc -->
 
-- [Table of Contents](#table-of-contents)
 - [Short demo](#short-demo)
 - [Included tech stack](#included-tech-stack)
   - [Telemetry Data Producers](#telemetry-data-producers)
   - [Collection and processing agents](#collection-and-processing-agents)
   - [Storage and query backends](#storage-and-query-backends)
-  - [Visualization:](#visualization)
+  - [Visualization](#visualization)
 - [Deployment](#deployment)
   - [Kamal](#kamal)
   - [Docker Compose](#docker-compose)
@@ -26,7 +25,7 @@ I recommend visiting [open-telemetry/opentelemetry-demo](https://github.com/open
   - [Traces](#traces)
   - [Metrics](#metrics)
   - [Correlating logs, traces and metrics](#correlating-logs-traces-and-metrics)
-- [TODO](#todo)
+- [TODOs](#todos)
 
 
 ## Short demo
@@ -38,7 +37,7 @@ I recommend visiting [open-telemetry/opentelemetry-demo](https://github.com/open
 ### Telemetry Data Producers
 
 - Web application: written in [Ruby on Rails](https://github.com/rails/rails)
-- Background jobs: handled by Rails USING [SolidQueue](https://github.com/rails/solid_queue)
+- Background jobs: handled by Rails using [SolidQueue](https://github.com/rails/solid_queue)
 
 ### Collection and processing agents
 
@@ -54,11 +53,10 @@ I recommend visiting [open-telemetry/opentelemetry-demo](https://github.com/open
 - [Loki](https://github.com/grafana/loki) for logs
 - [Prometheus](https://github.com/prometheus/prometheus) for metrics
 
-### Visualization:
+### Visualization
 
 - [Grafana](https://github.com/grafana/grafana) dashboarding for traces, logs, and metrics
 
-<!-- ![opentelemetry and rails](./docs/opentelemetry_rails.drawio.png "opentelemetry and rails") -->
 
 
 ## Deployment
@@ -67,9 +65,13 @@ I recommend visiting [open-telemetry/opentelemetry-demo](https://github.com/open
 
 ### Kamal
 
+![opentelemetry and rails](./docs/rails_observability.drawio.png "opentelemetry and rails")
+
 The Rails app features a proposal of Kamal deployment of the stack. The proposal includes three servers: app server, db server and observability server hosting storage and query backends with Grafana. Check out `rails_app/config/deploy.yml` for details. Please note that it should be considered as a general example. Even though it was successfully tested with deployment to servers, it may need tweaking for your specific use-case.
 
 ### Docker Compose
+
+Docker Compose allows to run the entire stack locally and experiment with it.
 
 Most of the commands to operate this repo are available through the Makefile.
 
@@ -131,7 +133,7 @@ The real synergy comes from correlating all the pillars of observability - logs,
 # Tests instrumentation -->
 
 
-## TODO
+## TODOs
 
 - Siekiq metrics
 
