@@ -36,10 +36,13 @@ I recommend visiting [open-telemetry/opentelemetry-demo](https://github.com/open
 
 ### Telemetry Data Producers
 
-- Web application: written in [Ruby on Rails](https://github.com/rails/rails)
-- Background jobs: handled by Rails using [SolidQueue](https://github.com/rails/solid_queue)
+Currently, the source of the telemetry data is a [Ruby on Rails](https://github.com/rails/rails) app, which acts as a web server and a [SolidQueue](https://github.com/rails/solid_queue) background jobs processor. It's instrumented with [OpenTelemetry](https://opentelemetry.io/docs/languages/ruby/) to emit traces to the collector and outputs logs to the STDOUT.
 
 ### Collection and processing agents
+
+Agent(s) run on the same host as the Rails application. Their role is to collect, process, and export telemetry data. Up to this point, the architecture is vendor-agnostic, allowing to switch destinations or test multiple destinations without changes to the application code.
+
+Included agents:
 
 - [OpenTelemetry Collector](https://github.com/open-telemetry/opentelemetry-collector)
   - receives, processes, and exports traces
@@ -48,6 +51,10 @@ I recommend visiting [open-telemetry/opentelemetry-demo](https://github.com/open
   - scraps, processes, and exports logs
 
 ### Storage and query backends
+
+Since this demo presents a self-hosted approach, this part represents the long-term storage and query API backends. It's strongly recommended to run these services on a separate host to increase the likelihood of accessing observability data during application outages.
+
+Included services:
 
 - [Tempo](https://github.com/grafana/tempo) for traces
 - [Loki](https://github.com/grafana/loki) for logs
@@ -58,7 +65,6 @@ I recommend visiting [open-telemetry/opentelemetry-demo](https://github.com/open
 - [Grafana](https://github.com/grafana/grafana) dashboarding for traces, logs, and metrics
 
 
-
 ## Deployment
 
 
@@ -67,7 +73,14 @@ I recommend visiting [open-telemetry/opentelemetry-demo](https://github.com/open
 
 ![opentelemetry and rails](./docs/rails_observability.drawio.png "opentelemetry and rails")
 
-The Rails app features a proposal of Kamal deployment of the stack. The proposal includes three servers: app server, db server and observability server hosting storage and query backends with Grafana. Check out `rails_app/config/deploy.yml` for details. Please note that it should be considered as a general example. Even though it was successfully tested with deployment to servers, it may need tweaking for your specific use-case.
+The Rails app includes a proposed Kamal deployment for the entire observability stack. The setup defines three servers:
+- App Server - runs the Rails application and telemetry agents
+- DB Server – hosts the database
+- Observability Server – runs Grafana and stores telemetry data (traces, logs, metrics)
+
+You can find the full configuration in `rails_app/config/deploy.yml`
+
+Note: This deployment setup is provided as a general example. While it has been successfully tested in a live environment, it's not intedned to be used on-spot. You may need to adapt it to suit your specific requirements.
 
 ### Docker Compose
 
