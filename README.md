@@ -1,5 +1,5 @@
 
-# OpenTelemetry ∩ Rails <!-- omit in toc -->
+# Observability for Rails with OpenTelemetry <!-- omit in toc -->
 
 A reference repository for instrumenting Rails apps with observability, using self-hosted, open-source tools rather than commercial observability platforms. It’s intended primarily for testing, experimentation, and debugging - not as an ultimate guidance for production setups.
 
