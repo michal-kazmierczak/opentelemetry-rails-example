@@ -24,8 +24,8 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
+  "id": 2,
   "links": [],
-  "liveNow": false,
   "panels": [
     {
       "datasource": {
@@ -42,8 +42,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               }
             ]
           },
@@ -75,7 +74,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "11.2.1",
+      "pluginVersion": "11.6.0",
       "targets": [
         {
           "datasource": {
@@ -84,7 +83,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "sum(rate(rack_server_request_duration_seconds_count{path!=\"/health\",method!=\"options\",path=~\"$path\"}[$__rate_interval]))",
+          "expr": "sum(rate(traces_span_metrics_calls_total{http_route=~\"$http_route\"}[2m]))",
           "instant": false,
           "interval": "",
           "legendFormat": "",
@@ -112,8 +111,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -121,7 +119,7 @@
               }
             ]
           },
-          "unit": "s"
+          "unit": "ms"
         },
         "overrides": []
       },
@@ -149,7 +147,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "11.2.1",
+      "pluginVersion": "11.6.0",
       "targets": [
         {
           "datasource": {
@@ -158,7 +156,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "sum(rate(rack_server_request_duration_seconds_sum{path!=\"/health\",method!=\"options\",path=~\"$path\"}[$__rate_interval]) ) / sum(rate(rack_server_request_duration_seconds_count{path!=\"/health\",method!=\"options\",path=~\"$path\"}[$__rate_interval]))",
+          "expr": "sum(rate(traces_span_metrics_duration_milliseconds_sum{http_route=~\"$http_route\"}[2m])) / sum(rate(traces_span_metrics_duration_milliseconds_count{http_route=~\"$http_route\"}[2m]))",
           "instant": false,
           "interval": "",
           "legendFormat": "",
@@ -232,10 +230,10 @@
         "yAxis": {
           "axisPlacement": "left",
           "reverse": false,
-          "unit": "s"
+          "unit": "ms"
         }
       },
-      "pluginVersion": "11.2.1",
+      "pluginVersion": "11.6.0",
       "targets": [
         {
           "datasource": {
@@ -243,7 +241,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "sum by (le) (rate(rack_server_request_duration_seconds_bucket{path!=\"/health\",method!=\"options\",path=~\"$path\"}[$__rate_interval]))",
+          "expr": "sum by (le) (rate(traces_span_metrics_duration_milliseconds_bucket{http_route=~\"$http_route\"}[2m]))",
           "format": "heatmap",
           "legendFormat": "__auto",
           "range": true,
@@ -269,8 +267,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "super-light-red",
-                "value": null
+                "color": "super-light-red"
               }
             ]
           }
@@ -307,7 +304,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "11.2.1",
+      "pluginVersion": "11.6.0",
       "targets": [
         {
           "datasource": {
@@ -316,7 +313,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "sum(increase(rack_server_request_duration_seconds_count{path!=\"/health\",path=~\"$path\",code=~\"5.*\"}[$__range]))\nor vector(0)",
+          "expr": "sum(increase(traces_span_metrics_calls_total{http_route=~\"$http_route\",http_status_code=~\"5.*\"}[$__range]))\nor vector(0)",
           "format": "time_series",
           "instant": true,
           "interval": "",
@@ -351,21 +348,21 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
                 "value": 80
               }
             ]
-          }
+          },
+          "unit": "ms"
         },
         "overrides": [
           {
             "matcher": {
               "id": "byName",
-              "options": "method"
+              "options": "http_method"
             },
             "properties": [
               {
@@ -382,7 +379,7 @@
             "properties": [
               {
                 "id": "unit",
-                "value": "s"
+                "value": "ms"
               },
               {
                 "id": "custom.width",
@@ -402,7 +399,7 @@
               },
               {
                 "id": "unit",
-                "value": "s"
+                "value": "ms"
               }
             ]
           },
@@ -414,7 +411,7 @@
             "properties": [
               {
                 "id": "unit",
-                "value": "s"
+                "value": "ms"
               },
               {
                 "id": "custom.width",
@@ -425,7 +422,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "path"
+              "options": "http_route"
             },
             "properties": [
               {
@@ -437,7 +434,7 @@
                 "value": [
                   {
                     "title": "View logs",
-                    "url": "/explore?schemaVersion=1&panes={\"sXs\":{\"datasource\":\"P8E80F9AEF21F6940\",\"queries\":[{\"refId\":\"A\",\"expr\":\"{project=\\\"opentelemetry-rails\\\",container=\\\"opentelemetry-rails-example-web_app-1\\\"} |~ \\\"(?i)${__data.fields.method}.*${__data.fields.path}\\\"\",\"queryType\":\"range\",\"datasource\":{\"type\":\"loki\",\"uid\":\"P8E80F9AEF21F6940\"},\"editorMode\":\"code\"}],\"range\":{\"from\":\"$__from\",\"to\":\"$__to\"}}}&orgId=1"
+                    "url": "/explore?schemaVersion=1&panes={\"sXs\":{\"datasource\":\"P8E80F9AEF21F6940\",\"queries\":[{\"refId\":\"A\",\"expr\":\"{container_name=~\\\"opentelemetry-rails-example-web-.*\\\"} |~ \\\"(?i)${__data.fields.http_method}.*${__data.fields.http_route}\\\"\",\"queryType\":\"range\",\"datasource\":{\"type\":\"loki\",\"uid\":\"P8E80F9AEF21F6940\"},\"editorMode\":\"code\"}],\"range\":{\"from\":\"$__from\",\"to\":\"$__to\"}}}&orgId=1"
                   }
                 ]
               }
@@ -471,7 +468,7 @@
           }
         ]
       },
-      "pluginVersion": "11.2.1",
+      "pluginVersion": "11.6.0",
       "targets": [
         {
           "datasource": {
@@ -480,37 +477,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "sum by(path,method) (increase(rack_server_request_duration_seconds_sum{path!=\"/health\",method!=\"options\",path=~\"$path\"}[$__range]))",
-          "format": "table",
-          "hide": true,
-          "instant": true,
-          "legendFormat": "__auto",
-          "range": false,
-          "refId": "CUMULATIVE_TIME"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "PBFA97CFB590B2093"
-          },
-          "editorMode": "code",
-          "exemplar": false,
-          "expr": "sum by(path,method) (increase(rack_server_request_duration_seconds_count{path!=\"/health\",method!=\"options\",path=~\"$path\"}[$__range]))",
-          "format": "table",
-          "hide": true,
-          "instant": true,
-          "legendFormat": "__auto",
-          "range": false,
-          "refId": "COUNT_OF_REQUESTS"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "PBFA97CFB590B2093"
-          },
-          "editorMode": "code",
-          "exemplar": false,
-          "expr": "histogram_quantile(0.5, sum(rate(rack_server_request_duration_seconds_bucket[5m])) by (le,method,path))",
+          "expr": "histogram_quantile(0.5, sum(rate(traces_span_metrics_duration_milliseconds_bucket{http_route!=\"\"}[2m])) by (le,http_route,http_method))",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -525,7 +492,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "histogram_quantile(0.95, sum(rate(rack_server_request_duration_seconds_bucket[5m])) by (le,method,path))",
+          "expr": "histogram_quantile(0.95, sum(rate(traces_span_metrics_duration_milliseconds_bucket{http_route!=\"\"}[2m])) by (le,http_route,http_method))",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -540,7 +507,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "histogram_quantile(0.99, sum(rate(rack_server_request_duration_seconds_bucket[5m])) by (le,method,path))",
+          "expr": "histogram_quantile(0.99, sum(rate(traces_span_metrics_duration_milliseconds_bucket{http_route!=\"\"}[2m])) by (le,http_route,http_method))",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -590,6 +557,14 @@
                   "lastNotNull"
                 ],
                 "operation": "aggregate"
+              },
+              "http_method": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "http_route": {
+                "aggregations": [],
+                "operation": "groupby"
               },
               "method": {
                 "aggregations": [],
@@ -675,8 +650,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -684,7 +658,7 @@
               }
             ]
           },
-          "unit": "s"
+          "unit": "ms"
         },
         "overrides": []
       },
@@ -703,10 +677,12 @@
           "showLegend": true
         },
         "tooltip": {
+          "hideZeros": false,
           "mode": "single",
           "sort": "none"
         }
       },
+      "pluginVersion": "11.6.0",
       "targets": [
         {
           "datasource": {
@@ -715,9 +691,9 @@
           },
           "editorMode": "code",
           "exemplar": true,
-          "expr": "sum by(path,method) (rate(rack_server_request_duration_seconds_sum{path!=\"/health\",method!=\"options\",path=~\"$path\"}[$__rate_interval])) / sum by(path,method) (rate(rack_server_request_duration_seconds_count{path!=\"/health\",method!=\"options\",path=~\"$path\"}[$__rate_interval])) > 0",
+          "expr": "sum by(http_method,http_route) (rate(traces_span_metrics_duration_milliseconds_sum{http_route=~\"$http_route\"}[2m])) / sum by(http_route,http_method) (rate(traces_span_metrics_duration_milliseconds_count{http_route=~\"$http_route\"}[2m])) > 0",
           "interval": "",
-          "legendFormat": "{{method}} {{path}}",
+          "legendFormat": "{{http_method}} {{http_route}}",
           "range": true,
           "refId": "A"
         }
@@ -773,8 +749,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               }
             ]
           },
@@ -797,10 +772,12 @@
           "showLegend": true
         },
         "tooltip": {
+          "hideZeros": false,
           "mode": "single",
           "sort": "none"
         }
       },
+      "pluginVersion": "11.6.0",
       "targets": [
         {
           "datasource": {
@@ -809,9 +786,9 @@
           },
           "editorMode": "code",
           "exemplar": true,
-          "expr": "sum by (code) (rate(rack_server_request_duration_seconds_count{path=~\"$path\"}[$__rate_interval])) > 0",
+          "expr": "sum by (http_status_code) (rate(traces_span_metrics_duration_milliseconds_count{http_route=~\"$http_route\"}[2m])) > 0",
           "interval": "",
-          "legendFormat": "{{code}}",
+          "legendFormat": "{{http_status_code}}",
           "range": true,
           "refId": "A"
         }
@@ -870,8 +847,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -898,10 +874,12 @@
           "showLegend": true
         },
         "tooltip": {
+          "hideZeros": false,
           "mode": "single",
           "sort": "none"
         }
       },
+      "pluginVersion": "11.6.0",
       "targets": [
         {
           "datasource": {
@@ -910,9 +888,9 @@
           },
           "editorMode": "code",
           "exemplar": true,
-          "expr": "sum by(path,method) (rate(rack_server_request_duration_seconds_count{path!=\"/health\",method!=\"options\",path=~\"$path\"}[$__rate_interval])) > 0.001",
+          "expr": "sum by(http_method,http_route) (rate(traces_span_metrics_duration_milliseconds_count{http_route=~\"$http_route\"}[2m])) > 0.001",
           "interval": "",
-          "legendFormat": "{{method}} {{path}}",
+          "legendFormat": "{{http_method}} {{http_route}}",
           "range": true,
           "refId": "A"
         }
@@ -921,14 +899,14 @@
       "type": "timeseries"
     }
   ],
+  "preload": false,
   "refresh": false,
-  "schemaVersion": 39,
+  "schemaVersion": 41,
   "tags": [],
   "templating": {
     "list": [
       {
         "current": {
-          "selected": true,
           "text": [
             "All"
           ],
@@ -940,21 +918,18 @@
           "type": "prometheus",
           "uid": "PBFA97CFB590B2093"
         },
-        "definition": "label_values(rack_server_request_duration_seconds_count,path)",
-        "hide": 0,
+        "definition": "label_values(traces_span_metrics_calls_total,http_route)",
         "includeAll": true,
         "multi": true,
-        "name": "path",
+        "name": "http_route",
         "options": [],
         "query": {
           "qryType": 1,
-          "query": "label_values(rack_server_request_duration_seconds_count,path)",
+          "query": "label_values(traces_span_metrics_calls_total,http_route)",
           "refId": "PrometheusVariableQueryEditor-VariableQuery"
         },
         "refresh": 1,
         "regex": "",
-        "skipUrlSync": false,
-        "sort": 0,
         "type": "query"
       }
     ]
@@ -965,8 +940,7 @@
   },
   "timepicker": {},
   "timezone": "",
-  "title": "Rack API Performance",
+  "title": "Rails HTTP Overview",
   "uid": "7NAwfw5ab",
-  "version": 1,
-  "weekStart": ""
+  "version": 1
 }

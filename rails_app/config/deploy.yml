@@ -1,0 +1,202 @@
+service: opentelemetry-rails-example
+
+servers:
+  web:
+    hosts:
+      - <%= ENV["WEB_AND_JOBS_IP"] %>
+    env:
+      clear:
+        SERVICE_NAME: "web_app"
+    proxy:
+      host: <%= ENV["HOST"] %>
+      app_port: 3000
+      ssl: true
+  job:
+    hosts:
+      - <%= ENV["WEB_AND_JOBS_IP"] %>
+    cmd: bin/jobs
+    env:
+      clear:
+        SERVICE_NAME: "jobs_app"
+  observability:
+    hosts:
+      - <%= ENV["OBSERVABILITY_IP"] %>
+
+env:
+  clear:
+    DATABASE_HOST: 10.0.0.4
+    SOLID_QUEUE_IN_PUMA: false
+    OTEL_EXPORTER_OTLP_ENDPOINT: http://opentelemetry-rails-example-otelcol:4318
+  secret:
+    - RAILS_MASTER_KEY
+    - POSTGRES_USER
+    - POSTGRES_PASSWORD
+
+volumes:
+  - "app_storage:/app/storage"
+
+asset_path: /rails/public/assets
+
+accessories:
+  db:
+    image: postgres:16
+    hosts:
+      - <%= ENV["DB_IP"] %>
+    port: 5432
+    env:
+      clear:
+        PGDATA: /var/lib/postgresql/pg-data
+      secret:
+        - POSTGRES_PASSWORD
+    files:
+      - config/deploy/postgres/setup.sql:/docker-entrypoint-initdb.d/setup.sql
+      - config/deploy/postgres/postgresql.conf:/var/lib/postgresql/data/postgresql.conf
+      - config/deploy/postgres/pg_hba.conf:/var/lib/postgresql/data/pg_hba.conf
+    directories:
+      - postgres-data:/var/lib/postgresql/pg-data
+
+  # vector and otelcol are agents running next to the application
+  # to collect logs, traces, and metrics (telemetry signals), process them, and export
+  vector:
+    image: timberio/vector:0.46.1-alpine
+    roles:
+      - web
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    files:
+      - config/deploy/vector/vector.yaml:/etc/vector/vector.yaml
+
+  otelcol:
+    image: otel/opentelemetry-collector-contrib:0.123.0
+    roles:
+      - web
+    env:
+      clear:
+        OTEL_EXPORTER_OTLP_ENDPOINT: opentelemetry-rails-example-otelcol:4318
+    cmd: "--config=/etc/otelcol-config.yml"
+    files:
+      - config/deploy/opentelemetry-collector/otelcol-config.yml:/etc/otelcol-config.yml
+    volumes:
+      - /:/hostfs # for hostmetrics
+    options:
+      publish:
+        - 4318:4318
+        - 8889:8889
+
+  # the accessories below serve as storage backends for telemetry data
+  # and provide APIs that Grafana can query for visualization
+  loki:
+    image: grafana/loki:3.4.3
+    roles:
+      - observability
+    network: host
+    cmd: "-config.file=/etc/loki/config.yaml"
+    files:
+      - config/deploy/loki/config.yaml:/etc/loki/config.yaml
+    port: 3100
+
+  tempo:
+    image: grafana/tempo:2.7.2
+    roles:
+      - observability
+    network: host
+    cmd: "-config.file=/etc/tempo.yaml"
+    files:
+      - config/deploy/tempo/tempo.yaml:/etc/tempo.yaml
+    port: 3200
+
+  prometheus:
+    image: prom/prometheus:v3.3.1
+    roles:
+      - observability
+    network: host
+    cmd: >
+      --config.file=/etc/prometheus/prometheus.yml
+      --storage.tsdb.path=/prometheus
+      --storage.tsdb.retention.time=30d
+      --web.enable-remote-write-receiver
+    files:
+      - config/deploy/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    directories:
+      # required: sudo chown -R 65534:65534 opentelemetry-rails-example-prometheus/data
+      # to fix: err="open /prometheus/queries.active: permission denied"
+      - data:/prometheus
+
+  grafana:
+    image: grafana/grafana:11.6.0
+    roles:
+      - observability
+    network: host
+    port: 3000
+    env:
+      secret:
+        - GF_SECURITY_ADMIN_USER
+        - GF_SECURITY_ADMIN_PASSWORD
+    files:
+      - config/deploy/grafana/grafana.ini:/etc/grafana/grafana.ini
+      - config/deploy/grafana/provisioning/datasources/default.yaml:/etc/grafana/provisioning/datasources/default.yaml
+      - config/deploy/grafana/provisioning/dashboards/general.yaml:/etc/grafana/provisioning/dashboards/general.yaml
+      - config/deploy/grafana/provisioning/dashboards/general/log-volume.json:/etc/grafana/provisioning/dashboards/general/log-volume.json
+      - config/deploy/grafana/provisioning/dashboards/general/rails-http-overview.json:/etc/grafana/provisioning/dashboards/general/rails-http-overview.json
+    labels:
+      traefik.enable: true
+      traefik.http.routers.grafana.rule: "Host(`grafana-otel-rails-example.mkaz.me`)"
+      traefik.http.routers.grafana.entrypoints: "websecure"
+      traefik.http.routers.grafana.tls.certresolver: "myresolver"
+      traefik.http.services.grafana.loadbalancer.server.port: "3000"
+
+  # needed to serve Grafana over HTTPS, kamal-proxy couldn't resolve Grafana's healthcheck
+  traefik:
+    image: traefik:v2.11
+    roles:
+      - observability
+    network: host
+    cmd: >
+      --providers.docker=true
+      --providers.docker.exposedbydefault=false
+      --entrypoints.websecure.address=:443
+      --entrypoints.web.http.redirections.entrypoint.to=websecure
+      --entrypoints.web.http.redirections.entrypoint.scheme=https
+      --certificatesresolvers.myresolver.acme.tlschallenge=true
+      --certificatesresolvers.myresolver.acme.email=your@email.com
+      --certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json
+    port: 443
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /var/lib/traefik:/letsencrypt
+
+  # general purpose object storage
+  minio:
+    image: minio/minio:RELEASE.2025-04-22T22-12-26Z
+    roles:
+      - observability
+    network: host
+    cmd: minio server /data
+    port: 9000
+    env:
+      clear:
+        MINIO_ROOT_USER: minio
+        MINIO_ROOT_PASSWORD: supersecret # not suitable for production
+        MINIO_PROMETHEUS_AUTH_TYPE: public
+        MINIO_UPDATE: off
+    # make sure that following directories are created
+    #  - opentelemetry-rails-example-minio/data/loki-data
+    #  - opentelemetry-rails-example-minio/data/loki-ruler
+    #  - opentelemetry-rails-example-minio/data/tempo-data
+    directories:
+      - data:/data
+
+# usage: dotenv kamal <alias>
+aliases:
+  console: app exec -i --reuse "bin/rails console"
+  psql: accessory exec db -i "psql postgresql://<%= ENV["POSTGRES_USER"] %>:<%= ENV["POSTGRES_PASSWORD"] %>@opentelemetry-rails-example-db/opentelemetry_rails_production"
+  psql-queue: accessory exec db -i "psql postgresql://<%= ENV["POSTGRES_USER"] %>:<%= ENV["POSTGRES_PASSWORD"] %>@opentelemetry-rails-example-db/opentelemetry_rails_production_queue"
+
+builder:
+  arch: x86_64
+image: michal-kazmierczak/opentelemetry-rails-example
+registry:
+  server: ghcr.io
+  username: michal-kazmierczak
+  password:
+    - KAMAL_REGISTRY_PASSWORD
