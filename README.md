@@ -5,6 +5,10 @@ A reference repository for instrumenting Rails apps with observability, using se
 
 It's _opinionated_ in the way that included libraries and solutions do have alternatives. The goal is to stay aligned with Open Source and Open Standards.  Suggestions and discussions around alternative approaches are welcome.
 
+The stack is available in two forms:
+- as a **Kamal** deployment - see `rails_app/config/deploy/yml`
+- as a **Docker Compose** - see `docker-compose.yml`
+
 The repository is being gradually updated as Open Telemetry SDK and Open Telemetry Contrib Packages for Ruby progress. (Note: as of now, the Ruby OTel instrumentation for metrics and traces is WIP.)
 
 I recommend visiting [open-telemetry/opentelemetry-demo](https://github.com/open-telemetry/opentelemetry-demo) for a complete example of instrumentation of a distributed system.
@@ -108,23 +112,19 @@ or you can run the included load tests with k6. For more details, check the k6 s
 
 ### Logs
 
-The [rails_semantic_logger](https://github.com/reidmorrison/rails_semantic_logger) gem is used in the Rails app to produce and output logs to the `STDOUT`. Then, **promtail** scraps logs from the docker's standard output and pushes them to **Loki**. **Loki** stores the logs and makes them available for querying in **Grafana**.
+The [rails_semantic_logger](https://github.com/reidmorrison/rails_semantic_logger) gem is used in the Rails app to produce and output logs to the `STDOUT` in the JSON format. Then, **Vector** scraps logs from the docker's standard output, removes redundant fields, and pushes them to **Loki** in a more human-friendly `fmt` format. **Loki** stores the logs and makes them available for querying in **Grafana**.
 
-Logs are outputted in the `fmt` format. In addition to standard fields, there are extra fields included: `request_id`, `trace_id`, `span_id` and `operation`.
+In addition to standard fields, there are extra fields included: `request_id`, `trace_id`, `span_id` and `operation`.
 
 ### Traces
 
 The Rails app is auto-instrumented with suitable Open Telemetry Contrib packages. The list of all available packages can be found on the [OpenTelemetry registry](https://opentelemetry.io/ecosystem/registry/?s=&component=&language=ruby).
 
-Traces produced by the instrumentation are being sent to the **OpenTelemetry Collector**. Then, **OpenTelemetry Collector** exports them to **Tempo** which stores the traces and makes them available for querying in **Grafana**.
+Traces produced by the instrumentation are being sent to the **OpenTelemetry Collector**. Then, **OpenTelemetry Collector** applies tail sampling to drop noisy traces (with the latency <10ms), and exports them to **Tempo** which stores the traces and makes them available for querying in **Grafana**.
 
 ### Metrics
 
-Metrics are emitted in the **StatsD** style. Currently, the only instrumentation is the [statsd-rack-instrument](https://rubygems.org/gems/statsd-rack-instrument) measuring HTTP requests.
-
-Metrics are sent to the `statsd_exporter` which then aggregates and exposes metrics in the **Prometheus** format. **Prometheus** scraps the `statsd_exporter`, stores and makes metrics available for querying in **Grafana**.
-\
-See a lengthy explanation why this approach is suggested https://mkaz.me/blog/2023/collecting-metrics-from-multi-process-web-servers-the-ruby-case/
+The Rails application does not emit metrics directly. Instead, metrics are derived from spans (all, not samples) using the spanmetrics processor in the OpenTelemetry Collector.
 
 ### Correlating logs, traces and metrics
 
@@ -148,8 +148,4 @@ The real synergy comes from correlating all the pillars of observability - logs,
 
 ## TODOs
 
-- Siekiq metrics
-
-- Exemplars to enable metrics <-> traces navigation
-
-- Include tradeId in the http response headers
+- Own metrics with StatsD
