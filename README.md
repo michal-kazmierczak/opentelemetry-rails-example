@@ -6,7 +6,7 @@ A reference repository for instrumenting Rails apps with observability, using se
 It's _opinionated_ in the way that included libraries and solutions do have alternatives. The goal is to stay aligned with Open Source and Open Standards.  Suggestions and discussions around alternative approaches are welcome.
 
 The stack is available in two forms:
-- as a **Kamal** deployment - see `rails_app/config/deploy/yml`
+- as a **Kamal** deployment - see `rails_app/config/deploy.yml`
 - as a **Docker Compose** - see `docker-compose.yml`
 
 The repository is being gradually updated as Open Telemetry SDK and Open Telemetry Contrib Packages for Ruby progress. (Note: as of now, the Ruby OTel instrumentation for metrics and traces is WIP.)
@@ -71,8 +71,6 @@ Included services:
 
 ## Deployment
 
-
-
 ### Kamal
 
 ![opentelemetry and rails](./docs/rails_observability.drawio.png "opentelemetry and rails")
@@ -104,7 +102,7 @@ make up
 curl localhost:3000/demo/database_bulk_read
 ```
 
-or you can run the included load tests with k6. For more details, check the k6 subdirectory: [K6 load test](https://github.com/michal-kazmierczak/opentelemetry-rails-example/tree/main/k6)
+or you can run the included load tests with k6. For more details, check the k6 subdirectory: [k6 load test](https://github.com/michal-kazmierczak/opentelemetry-rails-example/tree/main/k6)
 
 3. Visit the Grafana `Rack API Performance` dashboard to see graphs http://localhost:3001/d/7NAwfw5ab/rack-api-performance
 
